@@ -1,5 +1,8 @@
 n = input()
 
+if int(n) < 1 or int(n) > 100000 :
+    exit()
+
 a = [0]*n
 b = [0]*n
 
