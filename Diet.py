@@ -1,15 +1,20 @@
 n = input()
 
-if int(n) < 1 or int(n) > 100000 :
+if n < 1 or n > 100000 :
     exit()
 
-room_dict = {1:[-1,-1]}
+NO_PATIENT = 0
+
+a = [NO_PATIENT]*n
+b = [NO_PATIENT]*n
 
 for i in range(n):
-    room = raw_input().split()
-    room_dict[i+1] = [int(room[0]),int(room[1])]
+    room = input().split()
+    a[i] = int(room[0])
+    b[i] = int(room[1])
 
-#print(room_dict)
+#print(a)
+#print(b)
 
 q = input()
 index_option = 0
@@ -22,37 +27,35 @@ def StupidRobotStartFeeding(x) :
     #print("You are in Function")
     dead_number = 0
     dont_receive_number = 0
-    DEAD = -1
-    room_value = [0] * 2
-    a = 0
-    b = 1
-    remove_list = []
     room_ith = 0
-    for i in room_dict :
-        room_value = room_dict[i]
-        if room_value[a] > x :
-            room_ith = i
+
+    for room_ith in range(n) :
+        if a[room_ith] == NO_PATIENT:
+            continue
+
+        if a[room_ith] > x :
             break
-        x = x - room_value[a]
-        if x > room_value[b] :
+
+        x = x - a[room_ith]
+
+        if x > b[room_ith] :
             dead_number = dead_number + 1
-            remove_list.append(i)
-    for i in remove_list :
-        del room_dict[i]
+            
     
-    if room_ith != 0 :
-        room_idx = list(room_dict.keys()).index(room_ith)
-        dont_receive_number = len(room_dict) - room_idx
+    for i in range(room_ith,n) :
+        if a[i] == NO_PATIENT :
+            continue
+        dont_receive_number = dont_receive_number + 1
 
     result = str(dead_number) + ' ' + str(dont_receive_number)
 
     print(result)
 
 def ChangePatient(input_a,input_b,input_c) :
-    room_dict[input_c] = [int(input_a),int(input_b)]
+    a[input_c-1] = [int(input_a),int(input_b)]
 
 for i in range(q):
-    query = raw_input().split()
+    query = input().split()
 
     if int(query[index_option]) == 1 :
         x = int(query[index_x])
