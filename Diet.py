@@ -1,4 +1,5 @@
 n = input()
+n = int(n)
 
 if n < 1 or n > 100000 :
     exit()
@@ -17,6 +18,7 @@ for i in range(n):
 #print(b)
 
 q = input()
+q = int(q)
 index_option = 0
 index_x = 1
 index_a = 1
