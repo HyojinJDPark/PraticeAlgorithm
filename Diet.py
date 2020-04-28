@@ -9,10 +9,13 @@ NO_PATIENT = 0
 a = [NO_PATIENT]*n
 b = [NO_PATIENT]*n
 
+alive_room_ith_list = []
+
 for i in range(n):
     room = input().split()
     a[i] = int(room[0])
     b[i] = int(room[1])
+    alive_room_ith_list.append(i)
 
 #print(a)
 #print(b)
@@ -25,36 +28,49 @@ index_a = 1
 index_b = 2
 index_c = 3
 
+import heapq
+
 def StupidRobotStartFeeding(x) :
     #print("You are in Function")
     dead_number = 0
     dont_receive_number = 0
     room_ith = 0
+    remove_list = []
+    alive_room_index = 0
 
-    for room_ith in range(n) :
-        if a[room_ith] == NO_PATIENT:
-            continue
+    #print(alive_room_ith_list)
 
+    for room_ith in alive_room_ith_list :
         if a[room_ith] > x :
+            dont_receive_number = dont_receive_number + 1
             break
 
         x = x - a[room_ith]
 
         if x > b[room_ith] :
             dead_number = dead_number + 1
-            
+            a[room_ith] = NO_PATIENT
+            b[room_ith] = NO_PATIENT
+            remove_list.append(alive_room_index)
+        alive_room_index += 1
     
-    for i in range(room_ith,n) :
-        if a[i] == NO_PATIENT :
-            continue
-        dont_receive_number = dont_receive_number + 1
+    if alive_room_index < len(alive_room_ith_list) : 
+        dont_receive_number += len(alive_room_ith_list) - (alive_room_index + 1)
+
+    for i in remove_list[::-1] :
+        del alive_room_ith_list[i]
 
     result = str(dead_number) + ' ' + str(dont_receive_number)
 
     print(result)
 
 def ChangePatient(input_a,input_b,input_c) :
-    a[input_c-1] = [int(input_a),int(input_b)]
+    if a[input_c - 1] == NO_PATIENT :
+        heapq.heappush(alive_room_ith_list,(input_c -1))
+    
+    a[input_c-1] = int(input_a)
+    b[input_c-1] = int(input_b)
+    
 
 for i in range(q):
     query = input().split()
