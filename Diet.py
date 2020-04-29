@@ -22,11 +22,9 @@ for i in range(n):
 
 q = input()
 q = int(q)
-index_option = 0
-index_x = 1
-index_a = 1
-index_b = 2
-index_c = 3
+
+if q < 1 or q > 100000 :
+    exit()
 
 import heapq
 
@@ -61,8 +59,8 @@ def StupidRobotStartFeeding(x) :
         del alive_room_ith_list[i]
 
     result = str(dead_number) + ' ' + str(dont_receive_number)
-
-    print(result)
+    result_list.append(result)
+    #print(result)
 
 def ChangePatient(input_a,input_b,input_c) :
     if a[input_c - 1] == NO_PATIENT :
@@ -71,9 +69,15 @@ def ChangePatient(input_a,input_b,input_c) :
     a[input_c-1] = int(input_a)
     b[input_c-1] = int(input_b)
     
-
+result_list = []
 for i in range(q):
     query = input().split()
+
+    index_option = 0
+    index_x = 1
+    index_a = 1
+    index_b = 2
+    index_c = 3
 
     if int(query[index_option]) == 1 :
         x = int(query[index_x])
@@ -83,4 +87,6 @@ for i in range(q):
         input_b = int(query[index_b])
         input_c = int(query[index_c])
         ChangePatient(input_a,input_b,input_c)
-        
+
+for i in result_list :
+    print(i)
