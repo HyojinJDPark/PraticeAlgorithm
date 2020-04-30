@@ -1,5 +1,6 @@
 #include<iostream>
 #include<list>
+#include<map>
 
 using namespace std;
 
@@ -7,7 +8,7 @@ using namespace std;
 
 class Diet{
 public:
-    Diet(int n) : number_of_dead(0), number_of_dont_receive(0),n(n)
+    Diet(unsigned int n) : number_of_dead(0), number_of_dont_receive(0),n(n)
     {
         a = new unsigned long long[n]();
         b = new unsigned long long[n]();
@@ -23,39 +24,31 @@ public:
         #define NO_PATIENT 0
 
         int i = 0;
+        list<unsigned int>::iterator it;
+        int alive_patients_idx = 0;
+        int list_size = alive_patients.size();
 
-        for(i = 0; i < n; i++)
+        for(it = alive_patients.begin(); it != alive_patients.end(); it++)
         {
-            if( a[i] == NO_PATIENT)
+            unsigned int idx = *it;
+            if( x < a[idx])
             {
-                continue;
-            }
-
-            if( x < a[i])
-            {
-                number_of_dont_receive++;
                 break;
             }
 
-            x = x - a[i];
+            x = x - a[idx];
 
-            if( x > b[i])
+            if( x > b[idx])
             {
                 number_of_dead++;
-                a[i] = NO_PATIENT;
-                b[i] = NO_PATIENT;
+                a[idx] = NO_PATIENT;
+                b[idx] = NO_PATIENT;
+                alive_patients.erase(it);
             }
+            alive_patients_idx++;
         }
 
-        for( int j = i+1 ; j < n; j++)
-        {
-            if( a[j] == NO_PATIENT )
-            {
-                continue;
-            }
-
-            number_of_dont_receive++;
-        }
+        number_of_dont_receive = list_size - alive_patients_idx;
 
         str_result = to_string(number_of_dead) + " " + to_string(number_of_dont_receive);
 
@@ -68,11 +61,28 @@ public:
         {
             cin>>a[i];
             cin>>b[i];
+            alive_patients.push_back(i);
         }
     }
 
     void SetPatient(unsigned long long a, unsigned long long b, int c)
     {
+        if( this->a[c-1] == NO_PATIENT)
+        {
+            list<unsigned int>::iterator it;
+
+            for(it = alive_patients.begin(); it != alive_patients.end(); it++)
+            {
+                unsigned int idx = *it;
+                if((c-1) < idx)
+                {
+                    break;
+                }
+            }
+
+            alive_patients.insert(it,c-1);
+        }
+        
         this->a[c-1] = a;
         this->b[c-1] = b;
     }
@@ -88,16 +98,17 @@ public:
 #endif
 
 private:
-    int number_of_dead;
-    int number_of_dont_receive;
+    unsigned int number_of_dead;
+    unsigned int number_of_dont_receive;
     unsigned long long *a;
     unsigned long long *b;
     int n;
+    list<unsigned int> alive_patients;
 };
 
 int main()
 {
-    int n = 0;
+    unsigned int n = 0;
 
     cin>>n;
 
@@ -118,7 +129,7 @@ int main()
     robot.PrintRoomStatus();
 #endif
 
-    int q = 0;
+    unsigned int q = 0;
 
     cin>>q;
 
