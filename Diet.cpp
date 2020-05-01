@@ -28,6 +28,7 @@ public:
         unsigned int map_size = map_alive_patients.size();
         list<map<unsigned int,unsigned int>::iterator> remove_list;
         map<unsigned int, unsigned int>::iterator map_it;
+        map<unsigned int, unsigned int> new_map;
 
         for(map_it = map_alive_patients.begin(); map_it != map_alive_patients.end(); map_it++)
         {
@@ -43,17 +44,18 @@ public:
                 number_of_dead++;
                 a[map_it->first] = NO_PATIENT;
                 b[map_it->first] = NO_PATIENT;
-                remove_list.push_back(map_it);
             }
+            else
+            {
+                new_map.insert(pair<unsigned int, unsigned int>(map_it->first,map_it->first));
+            }
+            
             alive_patients_idx++;
         }
 
-        list<map<unsigned int,unsigned int>::iterator>::iterator remove_it;
-
-        for(remove_it = remove_list.begin(); remove_it != remove_list.end(); remove_it++)
-        {
-            map_alive_patients.erase(*remove_it);
-        }
+        new_map.insert(map_it,map_alive_patients.end());
+        map_alive_patients.clear();
+        map_alive_patients = new_map;
 
         number_of_dont_receive = map_size - alive_patients_idx;
 
