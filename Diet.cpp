@@ -24,40 +24,38 @@ public:
         #define NO_PATIENT 0
 
         int i = 0;
-        list<unsigned int>::iterator it;
         int alive_patients_idx = 0;
-        int list_size = alive_patients.size();
-        list<list<unsigned int>::iterator> remove_list;
+        unsigned int map_size = map_alive_patients.size();
+        list<map<unsigned int,unsigned int>::iterator> remove_list;
+        map<unsigned int, unsigned int>::iterator map_it;
 
-        for(it = alive_patients.begin(); it != alive_patients.end(); it++)
+        for(map_it = map_alive_patients.begin(); map_it != map_alive_patients.end(); map_it++)
         {
-            unsigned int idx = *it;
-            if( x < a[idx])
+            if( x < a[map_it->first])
             {
                 break;
             }
 
-            x = x - a[idx];
+            x = x - a[map_it->first];
 
-            if( x > b[idx])
+            if( x > b[map_it->first])
             {
                 number_of_dead++;
-                a[idx] = NO_PATIENT;
-                b[idx] = NO_PATIENT;
-                //alive_patients.erase(it);
-                remove_list.push_back(it);
+                a[map_it->first] = NO_PATIENT;
+                b[map_it->first] = NO_PATIENT;
+                remove_list.push_back(map_it);
             }
             alive_patients_idx++;
         }
 
-        list<list<unsigned int>::iterator>::iterator remove_it;
+        list<map<unsigned int,unsigned int>::iterator>::iterator remove_it;
 
         for(remove_it = remove_list.begin(); remove_it != remove_list.end(); remove_it++)
         {
-            alive_patients.erase(*remove_it);
+            map_alive_patients.erase(*remove_it);
         }
 
-        number_of_dont_receive = list_size - alive_patients_idx;
+        number_of_dont_receive = map_size - alive_patients_idx;
 
         str_result = to_string(number_of_dead) + " " + to_string(number_of_dont_receive);
 
@@ -66,11 +64,11 @@ public:
 
     void Initialize()
     {
-        for(int i = 0; i < n; i++)
+        for(unsigned int i = 0; i < n; i++)
         {
             cin>>a[i];
             cin>>b[i];
-            alive_patients.push_back(i);
+            map_alive_patients.insert(pair<unsigned int, unsigned int>(i,i));
         }
     }
 
@@ -78,18 +76,7 @@ public:
     {
         if( this->a[c-1] == NO_PATIENT)
         {
-            list<unsigned int>::iterator it;
-
-            for(it = alive_patients.begin(); it != alive_patients.end(); it++)
-            {
-                unsigned int idx = *it;
-                if((c-1) < idx)
-                {
-                    break;
-                }
-            }
-
-            alive_patients.insert(it,c-1);
+            map_alive_patients.insert(pair<unsigned int,unsigned int>(c-1,c-1));
         }
         
         this->a[c-1] = a;
@@ -112,7 +99,7 @@ private:
     unsigned long long *a;
     unsigned long long *b;
     int n;
-    list<unsigned int> alive_patients;
+    map<unsigned int,unsigned int> map_alive_patients;
 };
 
 int main()
