@@ -27,6 +27,7 @@ public:
         list<unsigned int>::iterator it;
         int alive_patients_idx = 0;
         int list_size = alive_patients.size();
+        list<list<unsigned int>::iterator> remove_list;
 
         for(it = alive_patients.begin(); it != alive_patients.end(); it++)
         {
@@ -43,9 +44,17 @@ public:
                 number_of_dead++;
                 a[idx] = NO_PATIENT;
                 b[idx] = NO_PATIENT;
-                alive_patients.erase(it);
+                //alive_patients.erase(it);
+                remove_list.push_back(it);
             }
             alive_patients_idx++;
+        }
+
+        list<list<unsigned int>::iterator>::iterator remove_it;
+
+        for(remove_it = remove_list.begin(); remove_it != remove_list.end(); remove_it++)
+        {
+            alive_patients.erase(*remove_it);
         }
 
         number_of_dont_receive = list_size - alive_patients_idx;
