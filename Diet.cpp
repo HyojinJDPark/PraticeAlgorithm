@@ -34,6 +34,7 @@ public:
         for(it = alive_patients.begin(); it != alive_patients.end(); it++)
         {
             unsigned int idx = *it;
+            
             if( x < a[idx])
             {
                 break;
@@ -102,7 +103,7 @@ private:
     unsigned int number_of_dont_receive;
     unsigned long long *a;
     unsigned long long *b;
-    int n;
+    unsigned int n;
     list<unsigned int> alive_patients;
 };
 
