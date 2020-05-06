@@ -8,7 +8,7 @@ using namespace std;
 
 class Diet{
 public:
-    Diet(unsigned int n) : number_of_dead(0), number_of_dont_receive(0),n(n)
+    Diet(unsigned int n) : number_of_dead(0), number_of_dont_receive(0),n(n),sorted(false)
     {
         a = new unsigned long long[n]();
         b = new unsigned long long[n]();
@@ -29,7 +29,11 @@ public:
         int list_size = alive_patients.size();
         list<list<unsigned int>::iterator> remove_list;
 
-        alive_patients.sort();
+        if(! sorted)
+        {
+            alive_patients.sort();
+            sorted = true;
+        }
 
         for(it = alive_patients.begin(); it != alive_patients.end(); it++)
         {
@@ -74,6 +78,7 @@ public:
             cin>>a[i];
             cin>>b[i];
             alive_patients.push_back(i);
+            sorted = true;
         }
     }
 
@@ -82,6 +87,7 @@ public:
         if( this->a[c-1] == NO_PATIENT)
         {
             alive_patients.push_back(c-1);
+            sorted = false;
         }
         
         this->a[c-1] = a;
@@ -105,6 +111,7 @@ private:
     unsigned long long *b;
     unsigned int n;
     list<unsigned int> alive_patients;
+    bool sorted;
 };
 
 int main()
