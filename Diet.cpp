@@ -146,21 +146,35 @@ int main()
         return -1;
     }
 
+    unsigned long long **input_value = new unsigned long long*[q];
+
+    for(unsigned int i = 0; i < q; i++)
+    {
+        input_value[i] = new unsigned long long[4];
+    }
+
     list<string> results;
 
     for(int i  = 0; i < q ; i++)
     {
         int type = 0;
 
+#define TYPE 0
+#define X 1
+#define A 1
+#define B 2
+#define C 3
+
         cin>>type;
+
+        input_value[i][TYPE] = type;
 
         if(type == 1)
         {
             unsigned long long x = 0;
 
             cin>>x;
-
-            results.push_back(robot.StupidRobotStartFeeding(x));
+            input_value[i][X] = x;
         }
         
         if(type == 2)
@@ -170,6 +184,27 @@ int main()
             cin>>a;
             cin>>b;
             cin>>c;
+
+            input_value[i][A] = a;
+            input_value[i][B] = b;
+            input_value[i][C] = c;
+        }
+    }
+
+    for(int i  = 0; i < q ; i++)
+    {
+        int type = input_value[i][TYPE];
+
+        if(type == 1)
+        {
+            unsigned long long x = input_value[i][X];
+
+            results.push_back(robot.StupidRobotStartFeeding(x));
+        }
+        
+        if(type == 2)
+        {
+            unsigned long long a = input_value[i][A], b = input_value[i][B], c = input_value[i][C];
 
 #if DEBUG_LOG
             cout<<a<<" "<<b<<" "<<c<<endl;
@@ -187,6 +222,13 @@ int main()
     {
         cout<<*it<<endl;
     }
+
+    for(int i = 0; i < q ; i++)
+    {
+        delete [] input_value[i];
+    }
+
+    delete [] input_value;
 
     return 0;
 }
