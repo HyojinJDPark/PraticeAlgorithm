@@ -1,15 +1,34 @@
 #include<iostream>
 #include<list>
 #include<map>
+#include<thread>
+#include<condition_variable>
+#include<mutex>
 
 using namespace std;
 
 #define DEBUG_LOG 0
 
+void PrintOutputs();
+void Inputs();
+void HandleInputs();
+
 class Diet{
 public:
+
     Diet(unsigned int n) : number_of_dead(0), number_of_dont_receive(0),n(n),sorted(false)
     {
+        a = new unsigned long long[n]();
+        b = new unsigned long long[n]();        
+    }
+
+    Diet() : number_of_dead(0), number_of_dont_receive(0),sorted(false)
+    {
+        
+    }
+    void SetN(unsigned int n)
+    {
+        this->n = n;
         a = new unsigned long long[n]();
         b = new unsigned long long[n]();
     }
@@ -114,6 +133,16 @@ private:
     bool sorted;
 };
 
+list<string> results;
+Diet robot;
+condition_variable end_cv;
+condition_variable output_cv;
+mutex output_mtx;
+mutex end_mtx;
+bool end_signal = false;
+unsigned long long **input_value;
+unsigned int q;
+
 int main()
 {
     unsigned int n = 0;
@@ -129,7 +158,8 @@ int main()
     cout<<n<<endl;
 #endif
 
-    Diet robot(n);
+    //Diet robot(n);
+    robot.SetN(n);
 
     robot.Initialize();
 
@@ -137,7 +167,7 @@ int main()
     robot.PrintRoomStatus();
 #endif
 
-    unsigned int q = 0;
+    q = 0;
 
     cin>>q;
 
@@ -146,24 +176,53 @@ int main()
         return -1;
     }
 
-    unsigned long long **input_value = new unsigned long long*[q];
+    input_value = new unsigned long long*[q];
 
     for(unsigned int i = 0; i < q; i++)
     {
         input_value[i] = new unsigned long long[4];
     }
 
-    list<string> results;
-
-    for(int i  = 0; i < q ; i++)
-    {
-        int type = 0;
-
 #define TYPE 0
 #define X 1
 #define A 1
 #define B 2
 #define C 3
+
+    thread input_thread(Inputs);
+    input_thread.join();
+
+    thread handle_thread(HandleInputs);
+    handle_thread.join();
+
+    thread output_thread(PrintOutputs);
+    output_thread.join();
+
+    unique_lock<mutex> output_lk(output_mtx);
+    output_cv.notify_one();
+    //must input wait signal until print outputs is done.
+
+    unique_lock<mutex> end_lk(end_mtx);
+    if(! end_signal )
+    {
+        end_cv.wait(end_lk);
+    }
+    
+    for(int i = 0; i < q ; i++)
+    {
+        delete [] input_value[i];
+    }
+
+    delete [] input_value;
+
+    return 0;
+}
+
+void Inputs()
+{
+    for(int i  = 0; i < q ; i++)
+    {
+        int type = 0;
 
         cin>>type;
 
@@ -190,7 +249,10 @@ int main()
             input_value[i][C] = c;
         }
     }
+}
 
+void HandleInputs()
+{
     for(int i  = 0; i < q ; i++)
     {
         int type = input_value[i][TYPE];
@@ -215,20 +277,33 @@ int main()
 #endif
         }
     }
+    results.push_back("last");
+}
 
-    list<string>::iterator it;
-
-    for(it = results.begin(); it != results.end(); it++)
+void PrintOutputs()
+{
+    while(1)
     {
-        cout<<*it<<endl;
+        unique_lock<mutex> output_lk(output_mtx);
+        //output_cv.wait(output_lk);
+
+        while(1)
+        {
+            if(results.empty())
+            {
+                break;
+            }
+            string result_str = results.front();
+            results.pop_front();
+            if(result_str == "last")
+            {
+                end_signal = true;
+
+                unique_lock<mutex> end_lk(end_mtx);
+                end_cv.notify_all();
+                return;
+            }
+            cout<<result_str<<endl;
+        }
     }
-
-    for(int i = 0; i < q ; i++)
-    {
-        delete [] input_value[i];
-    }
-
-    delete [] input_value;
-
-    return 0;
 }
