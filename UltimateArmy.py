@@ -30,6 +30,8 @@ def findSubordinates(supervisor,soldier_id_idx) :
                 new_str += bugs_str[i]
             elif brackets_start != 0 :
                 new_str += bugs_str[i]
+            else :
+                supervisor = int(bugs_str[i])
 
     bugs_str = new_str
 
@@ -41,7 +43,7 @@ def findSoldierIDIndex() :
 
 while 1 :
     if len (bugs_str) <= 1 :
-        break;
+        break
     soldier_id_idx = int(findSoldierIDIndex())
     #print(soldier_id_idx)
     findSubordinates(int(bugs_str[soldier_id_idx]),soldier_id_idx)
